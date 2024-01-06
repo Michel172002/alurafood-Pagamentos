@@ -49,7 +49,7 @@ public class PagamentoController {
         return ResponseEntity.ok(pagamentoAtualizado);
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<PagamentoDto> excluirPagamento(@PathVariable @NotNull Long id){
         pagamentoService.excluirPagamento(id);
 
