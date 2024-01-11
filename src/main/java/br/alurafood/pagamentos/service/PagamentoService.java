@@ -1,5 +1,6 @@
 package br.alurafood.pagamentos.service;
 
+import br.alurafood.pagamentos.dto.ItemDoPedidoDto;
 import br.alurafood.pagamentos.dto.PagamentoDto;
 import br.alurafood.pagamentos.http.PedidoClient;
 import br.alurafood.pagamentos.model.Pagamento;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,7 +36,11 @@ public class PagamentoService {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException());
 
-        return modelMapper.map(pagamento, PagamentoDto.class);
+        List<ItemDoPedidoDto> itens = pedidoClient.recuperarItensPedido(pagamento.getPedidoId());
+
+        PagamentoDto pagamentoDto = modelMapper.map(pagamento, PagamentoDto.class);
+        pagamentoDto.setListaItensDoPedido(itens);
+        return pagamentoDto;
     }
 
     public PagamentoDto criarPagamento(PagamentoDto dto){
@@ -72,7 +78,7 @@ public class PagamentoService {
     public void alteraStatus(Long id) {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
 
-        if(!pagamento.isPresent()){
+        if (!pagamento.isPresent()) {
             throw new EntityNotFoundException();
         }
 
